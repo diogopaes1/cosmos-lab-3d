@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080c19">
+<meta name="description" content="Laboratório cósmico 3D: descubra estrelas, anãs brancas, estrelas de nêutrons, buracos negros e quasares com experimentos interativos para o ensino médio.">
+<title>Cosmos Lab 3D | Laboratório de Astrofísica</title>
+<style>
+:root{--bg:#060a15;--panel:#0e1528;--border:rgba(183,203,255,.13);--text:#f0f5ff;--muted:#97a7c5;--accent:#9d9dff;--cyan:#58d5ef;--amber:#ffc386;--purple:#b0a6ff;--surface:rgba(13,21,38,.88)}
+*{box-sizing:border-box}html{height:100%;background:var(--bg);scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45;min-height:100%;font-size:14px}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}a{color:#94c8ff}
+.app{display:grid;grid-template-columns:minmax(320px,342px) minmax(350px,1fr) minmax(254px,287px);min-height:100dvh;max-width:1900px;margin:0 auto}
+.left,.right{background:linear-gradient(160deg,rgba(19,27,48,.96),rgba(8,13,27,.98));height:100dvh;overflow-y:auto;scrollbar-color:#2b3550 transparent;scrollbar-width:thin;position:relative;z-index:2}
+.left{border-right:1px solid var(--border);padding:25px 22px 28px}.right{border-left:1px solid var(--border);padding:27px 20px 32px}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:8px}.brand-symbol{width:34px;height:34px;border:1px solid rgba(171,177,255,.5);border-radius:11px;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#5353c9,#1a2142 65%);box-shadow:0 0 24px rgba(110,112,255,.18);font-size:19px}.brand-name{font-weight:800;letter-spacing:.11em;font-size:14px}.brand-name b{color:#a9afff}.eyebrow{font-size:10px;letter-spacing:.17em;font-weight:800;color:#99b7e4;text-transform:uppercase}.intro{font-size:12px;color:var(--muted);margin:6px 0 24px;max-width:280px}.mode-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;background:#090f1e;border:1px solid #26304c;padding:4px;border-radius:13px;gap:2px;margin-bottom:26px}.mode-tab{color:#91a3c1;background:transparent;border:0;padding:10px 4px;border-radius:9px;font-size:11px;font-weight:750;white-space:nowrap}.mode-tab.active{color:#fff;background:#333a66;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.section-title{font-size:11px;font-weight:850;letter-spacing:.10em;color:#bacbed;text-transform:uppercase;margin:21px 0 12px}.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.preset{min-height:90px;text-align:left;border:1px solid #26304b;border-radius:13px;background:linear-gradient(155deg,#17213a,#10182a);color:#dfe7f8;padding:11px;display:flex;flex-direction:column;gap:5px;transition:transform .2s,border .2s,background .2s}.preset:hover{transform:translateY(-1px);border-color:#6876a9}.preset.active{background:linear-gradient(145deg,#2b3059,#171f3a);border-color:#929bff;box-shadow:inset 0 0 0 1px #626fd34d,0 0 20px #615bff13}.preset-emoji{font-size:22px;height:26px;line-height:26px}.preset-name{font-size:12px;font-weight:750}.preset-hint{font-size:10px;color:#8f9db9;line-height:1.2}
+.form-group{margin:17px 0 21px}.slider-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:11px}.slider-head label{font-weight:650;color:#e8eefd;font-size:12px}.slider-value{font-weight:800;font-size:12px;color:#b7b8ff;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}input[type=range]{width:100%;height:6px;border-radius:12px;margin:0;appearance:none;-webkit-appearance:none;background:linear-gradient(to right,#6a77ef 0%,#9d9bf6 var(--fill,55%),#29324d var(--fill,55%));cursor:pointer}input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:18px;height:18px;background:#e8eaff;border:3px solid #7f7dea;border-radius:50%;box-shadow:0 0 0 3px #7775f12b}input[type=range]::-moz-range-thumb{width:13px;height:13px;background:#e8eaff;border:3px solid #7f7dea;border-radius:50%}.slider-note{font-size:11px;color:#8694b0;margin-top:8px;line-height:1.4}.controls-divider{height:1px;background:#25304a;margin:22px 0}.sidebar-note{background:#17203a;border:1px solid #2c3756;border-radius:12px;padding:12px 13px;color:#aebedd;font-size:11.5px;line-height:1.5}.sidebar-note strong{color:#e0e9ff}.hidden{display:none!important}.mini-pill{display:inline-block;border:1px solid #414c75;color:#bec8ff;border-radius:50px;padding:2px 7px;font-size:10px;letter-spacing:.06em;font-weight:800;margin-bottom:10px}
+.stage{position:relative;background:radial-gradient(ellipse at 50% 35%,#1a1c44,#070c1b 65%);height:100dvh;min-width:0;overflow:hidden;touch-action:pan-y}.stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:grab}.stage canvas.dragging{cursor:grabbing}.vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 47%,transparent 36%,rgba(2,5,14,.36) 100%)}.stage-heading{position:absolute;top:30px;left:33px;right:25px;pointer-events:none}.stage-heading h1{font-size:clamp(26px,2.7vw,45px);line-height:1.09;font-weight:800;margin:11px 0 9px;letter-spacing:-.035em;text-wrap:balance;max-width:570px}.stage-heading p{color:#c6d0ea;font-size:13px;max-width:520px;line-height:1.5;margin:0;text-shadow:0 1px 6px #040611}.status-pill{display:inline-flex;gap:7px;align-items:center;background:#34376366;border:1px solid #8b91ee55;padding:6px 10px;border-radius:99px;color:#c4caff;font-size:10px;font-weight:850;letter-spacing:.07em;text-transform:uppercase;backdrop-filter:blur(6px)}.status-dot{width:7px;height:7px;border-radius:50%;background:#7bf8df;box-shadow:0 0 9px #7bf8df}
+.stage-actions{display:flex;gap:7px;position:absolute;right:24px;bottom:155px;z-index:1}.round-btn{background:rgba(16,27,47,.74);border:1px solid #52617f8a;backdrop-filter:blur(12px);color:#f4f7ff;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:18px;font-weight:600}.round-btn:hover{background:#333e5c}.stage-footer{position:absolute;left:25px;right:25px;bottom:26px;pointer-events:none}.metric-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:735px;margin:0 auto;background:rgba(10,17,33,.70);border:1px solid rgba(135,157,210,.23);border-radius:17px;padding:15px 17px;backdrop-filter:blur(14px)}.metric{min-width:0}.metric:not(:last-child){border-right:1px solid #62708c55}.metric-k{color:#a1b4cf;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;font-weight:800}.metric-v{font-weight:800;letter-spacing:-.018em;font-size:clamp(14px,1.45vw,21px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.interaction-hint{text-align:center;font-size:11px;color:#9aa9c8;margin-bottom:12px;text-shadow:0 2px 10px #000}.hint-mobile{display:none}
+.right-heading{font-size:15px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px}.info-card{background:#141d33;border:1px solid #2b3953;border-radius:15px;padding:15px 15px;margin:0 0 14px}.info-top{display:flex;align-items:center;gap:9px;color:#ccd6fa;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin-bottom:12px}.info-symbol{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:#2c385c;color:#bedcff;font-size:18px}.info-card p{margin:0;color:#c0cce1;font-size:12px;line-height:1.57}.info-card .strong{font-weight:750;color:#f6f7ff}.info-card ul{padding-left:18px;margin:0;color:#becce0;font-size:12px;line-height:1.55}.info-card li{margin-bottom:7px}.fact-card{background:linear-gradient(155deg,#282344,#181e36);border-color:#49416e}.fact-card p{color:#dad5fa}.challenge-card{background:linear-gradient(155deg,#182c3e,#141d30);border-color:#33546b}.challenge-question{font-weight:750;color:#f3f9ff!important;font-size:13px!important;margin-bottom:9px!important}.challenge-answer{margin-top:12px!important;color:#aadcd8!important;border-top:1px solid #38616b;padding-top:12px}.soft-button{width:100%;background:#293b52;border:1px solid #557087;color:#e5faff;border-radius:10px;padding:9px;font-size:11px;font-weight:750;margin-top:11px}.soft-button:hover{background:#38566d}.small-text{font-size:11px;color:#879bb9;line-height:1.5}.sources a{display:block;text-decoration:none;font-size:11px;padding:6px 0}.sources a:hover{text-decoration:underline}.footer-sign{margin:18px 0 0;font-size:10px;color:#7183a4}.footer-credit{margin:9px 0 0;font-size:11px;font-weight:600;letter-spacing:.01em;color:#bac8eb}.footer-credit strong{color:#e1e7ff;font-weight:750}
+.scenario-block{margin:18px 0 6px}.scene-buttons{display:flex;flex-wrap:wrap;gap:6px}.scene-chip{border:1px solid #374868;border-radius:9px;padding:8px 11px;color:#c8d7f0;background:#17213a;font-size:11px;font-weight:720;flex:1;white-space:nowrap}.scene-chip:hover{background:#283454}.scene-chip.active{background:#3a3971;color:#fff;border-color:#9696f2;box-shadow:inset 0 0 0 1px #8d87ff44}.scene-explain{font-size:11px;line-height:1.5;color:#94aacb;margin:10px 0 0}.advanced-visual{margin:17px 0;border:1px solid #354463;border-radius:13px;background:#111b30;overflow:hidden}.advanced-visual summary{padding:12px 13px;cursor:pointer;color:#b9cdf4;font-weight:750;font-size:12px;list-style-position:inside}.advanced-visual[open] summary{border-bottom:1px solid #354463}.advanced-inner{padding:13px}.advanced-inner .form-group{margin:15px 0 17px}.advanced-inner .slider-note{font-size:10px}.checkbox-label{display:flex;align-items:flex-start;gap:9px;font-size:11px;color:#d6e3f9;margin-top:14px}.checkbox-label input{accent-color:#9e9bff;width:16px;height:16px;flex-shrink:0}.scene-label{font-size:10px;font-weight:800;letter-spacing:.08em;color:#a7bce0;text-transform:uppercase;margin-bottom:9px}
+
+.timeline-markers{display:flex;justify-content:space-between;margin:6px 0 14px;font-size:10px;color:#9eafd0;gap:4px}.timeline-markers span{text-align:center;flex:1}.result-card{background:linear-gradient(145deg,#25274d,#15243c);border:1px solid #585b9f;border-radius:13px;padding:15px;margin-top:18px}.result-card .r-title{font-size:10px;text-transform:uppercase;letter-spacing:.10em;color:#b3c0e8;font-weight:800}.result-card .r-value{font-size:18px;font-weight:800;color:#f3f4ff;margin:8px 0}.result-card .r-note{font-size:11px;color:#b3c4dc}
+dialog{background:#10192c;color:#e7edff;border:1px solid #596482;border-radius:18px;max-width:min(530px,calc(100vw - 32px));padding:26px;box-shadow:0 20px 100px #0009}dialog::backdrop{background:#030715b8;backdrop-filter:blur(5px)}dialog h2{margin:0 0 14px;font-size:22px}dialog p,dialog li{font-size:13px;line-height:1.65;color:#bfcee4}dialog ul{padding-left:20px}dialog .modal-close{float:right;border:1px solid #596482;background:#1b2a44;color:#fff;padding:6px 11px;border-radius:8px}
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);background:#243450;border:1px solid #526586;color:#fff;border-radius:11px;padding:12px 16px;box-shadow:0 10px 30px #0008;z-index:15;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;font-size:12px;max-width:calc(100vw - 40px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+.no-webgl{display:none;position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);background:#1a2741;color:#fff;padding:23px;max-width:340px;text-align:center;border-radius:14px;z-index:4}
+@media(min-width:1550px){.app{grid-template-columns:360px 1fr 300px}.left{padding:30px 25px}.right{padding:30px 25px}}
+@media(max-width:1160px) and (min-width:881px){.app{grid-template-columns:305px minmax(320px,1fr)}.left{padding:22px 17px}.right{grid-column:1 / -1;height:auto;overflow:visible;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px}.right-heading,.right .sources,.right .footer-sign,.right .footer-credit{grid-column:1/-1}.right-heading{margin:0}.right .info-card{margin:0}}
+@media(max-width:880px){body{background:#0c1424}.app{display:flex;flex-direction:column}.stage{order:1;height:min(58dvh,610px);min-height:360px}.left{order:2;height:auto;overflow:visible;border:0;border-top:1px solid var(--border);padding:22px 18px}.right{order:3;height:auto;overflow:visible;border:0;border-top:1px solid var(--border);padding:20px 18px}.brand{margin-bottom:5px}.intro{margin-bottom:15px;max-width:100%}.mode-tabs{margin-bottom:13px}.preset-grid{grid-template-columns:repeat(3,1fr)}.preset{min-height:84px;padding:10px}.section-title{margin-top:18px}.stage-heading{top:19px;left:19px;right:15px}.stage-heading h1{font-size:clamp(22px,6vw,34px);margin:7px 0}.stage-heading p{font-size:11px;max-width:340px}.stage-actions{right:14px;bottom:115px}.round-btn{width:31px;height:31px}.stage-footer{left:12px;right:12px;bottom:10px}.metric-strip{padding:10px 12px;gap:5px;border-radius:13px}.metric-v{font-size:13px}.metric-k{font-size:9px}.interaction-hint{font-size:10px;margin-bottom:7px}.hint-desktop{display:none}.hint-mobile{display:inline}.right-heading{margin-bottom:13px}.right .info-card{margin-bottom:11px}}
+@media(max-width:415px){.preset-grid{grid-template-columns:repeat(2,1fr)}.stage{height:52dvh;min-height:340px}.stage-heading p{max-width:275px}.status-pill{font-size:9px}.metric-strip{grid-template-columns:1fr 1fr 1fr}.metric-v{font-size:12px}.stage-actions{bottom:111px}.info-card{padding:13px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<main class="app" id="app">
+  <aside class="left" aria-label="Controles do laboratório">
+    <div class="brand"><span class="brand-symbol" aria-hidden="true">✦</span><div><div class="brand-name">COSMOS <b>LAB</b> <span style="color:#a9b7d6">3D</span></div><div class="eyebrow" style="font-size:9px">Laboratório de astrofísica</div></div></div>
+    <p class="intro">Explore fenômenos extremos do Universo. Mova os controles, observe e descubra a física por trás de cada astro.</p>
+    <div class="mode-tabs" role="tablist" aria-label="Modo de aprendizagem">
+      <button class="mode-tab active" id="tab-explore" role="tab" aria-selected="true" data-mode="explore">✦ Explorar</button>
+      <button class="mode-tab" id="tab-evolution" role="tab" aria-selected="false" data-mode="evolution">↗ Evolução</button>
+      <button class="mode-tab" id="tab-collapse" role="tab" aria-selected="false" data-mode="collapse">◎ Colapso</button>
+    </div>
+
+    <section id="explore-panel" aria-label="Exploração de corpos celestes">
+      <div class="section-title">Selecione um astro</div>
+      <div class="preset-grid" id="presets">
+        <button class="preset" data-body="sun"><span class="preset-emoji">☀️</span><span class="preset-name">Estrela</span><span class="preset-hint">Fusão nuclear</span></button>
+        <button class="preset" data-body="giant"><span class="preset-emoji">🔴</span><span class="preset-name">Gigante vermelha</span><span class="preset-hint">Estrela expandida</span></button>
+        <button class="preset" data-body="dwarf"><span class="preset-emoji">⚪</span><span class="preset-name">Anã branca</span><span class="preset-hint">Remanescente denso</span></button>
+        <button class="preset active" data-body="neutron"><span class="preset-emoji">✴️</span><span class="preset-name">Estrela de nêutrons</span><span class="preset-hint">Matéria extrema</span></button>
+        <button class="preset" data-body="blackhole"><span class="preset-emoji">⚫</span><span class="preset-name">Buraco negro</span><span class="preset-hint">Horizonte de eventos</span></button>
+        <button class="preset" data-body="quasar"><span class="preset-emoji">🌌</span><span class="preset-name">Quasar</span><span class="preset-hint">Núcleo galáctico ativo</span></button>
+      </div>
+      <div class="section-title">Experimente mudar a física</div>
+      <div class="form-group">
+        <div class="slider-head"><label for="mass-slider">Massa</label><output class="slider-value" id="mass-value">1,40 M☉</output></div>
+        <input type="range" id="mass-slider" min="1.1" max="2.3" step=".01" value="1.4"><div class="slider-note" id="mass-note">M☉ = massa do Sol.</div>
+      </div>
+      <div class="form-group" id="temperature-group">
+        <div class="slider-head"><label for="temperature-slider">Temperatura superficial</label><output class="slider-value" id="temperature-value">5.800 K</output></div>
+        <input type="range" id="temperature-slider" min="3000" max="12000" step="100" value="5800"><div class="slider-note">Temperatura em kelvin (K). A cor exibida é didática.</div>
+      </div>
+      <div class="form-group" id="spin-group">
+        <div class="slider-head"><label for="spin-slider">Rotação ilustrativa</label><output class="slider-value" id="spin-value">55%</output></div>
+        <input type="range" id="spin-slider" min="0" max="100" step="1" value="55"><div class="slider-note">Controla a animação. A velocidade mostrada não segue a escala de tempo real.</div>
+      </div>
+      <div class="form-group" id="feed-group">
+        <div class="slider-head"><label for="feed-slider">Gás em acreção</label><output class="slider-value" id="feed-value">65%</output></div>
+        <input type="range" id="feed-slider" min="0" max="100" step="1" value="65"><div class="slider-note">Mais gás alimentando o disco = mais luz emitida. Modelo qualitativo.</div>
+      </div>
+      <div class="form-group" id="field-group">
+        <div class="slider-head"><label id="field-label" for="field-slider">Feixes de radiação</label><output class="slider-value" id="field-value">70%</output></div>
+        <input type="range" id="field-slider" min="0" max="100" step="1" value="70"><div class="slider-note" id="field-note">Em alguns pulsares, o campo magnético orienta feixes de radiação.</div>
+      </div>
+      <div id="neutron-scenarios" class="scenario-block hidden" aria-label="Cenários de estrelas de nêutrons">
+        <div class="section-title">Três estados para comparar</div>
+        <div class="scene-buttons" role="group" aria-label="Tipo de estrela de nêutrons">
+          <button type="button" class="scene-chip" data-neutron="normal">Comum</button>
+          <button type="button" class="scene-chip active" data-neutron="pulsar">Pulsar</button>
+          <button type="button" class="scene-chip" data-neutron="magnetar">Magnetar</button>
+        </div>
+        <p class="scene-explain" id="neutron-scenario-note">Pulsares são estrelas de nêutrons cujos feixes podem cruzar nossa linha de visão.</p>
+      </div>
+      <details id="astro-advanced" class="advanced-visual hidden">
+        <summary>Mais opções de visualização</summary>
+        <div class="advanced-inner">
+          <div class="scene-label">Comparar aparência</div>
+          <div class="scene-buttons" role="group" aria-label="Tratamento da luz do disco">
+            <button type="button" class="scene-chip active" data-light="cinema">Cinema</button>
+            <button type="button" class="scene-chip" data-light="physics">Doppler</button>
+          </div>
+          <p class="scene-explain" id="light-note">Cinema: brilho equilibrado para destacar a curvatura do disco, como em Interstellar.</p>
+          <div class="form-group">
+            <div class="slider-head"><label for="angle-slider">Ângulo de observação</label><output class="slider-value" id="angle-value">73°</output></div>
+            <input type="range" id="angle-slider" min="0" max="90" step="1" value="73">
+            <div class="slider-note">0° = olhar de cima para o disco; 90° = observar de lado. Também é possível arrastar o objeto.</div>
+          </div>
+          <label id="jet-line" class="checkbox-label hidden"><input type="checkbox" id="jet-toggle" checked><span>Exibir jatos relativísticos possíveis no quasar</span></label>
+          <p class="scene-explain">O disco curvado e o anel brilhante são aproximações artísticas em tempo real, não cálculo exato de raios de luz em espaço-tempo curvo.</p>
+        </div>
+      </details>
+      <div class="sidebar-note"><strong>Importante:</strong> as dimensões visuais foram ampliadas ou reduzidas para facilitar a observação. Não é uma comparação em escala real.</div>
+    </section>
+
+    <section id="evolution-panel" class="hidden" aria-label="Ciclo de vida estelar">
+      <span class="mini-pill">EXPERIMENTO 01</span>
+      <h2 style="font-size:21px;letter-spacing:-.03em;margin:0 0 7px">Qual é o destino da estrela?</h2>
+      <p class="small-text" style="margin:0 0 21px">Escolha a massa da estrela <strong style="color:#fff">quando nasceu</strong> e avance sua vida. O astro evolui até deixar um remanescente.</p>
+      <div class="form-group">
+        <div class="slider-head"><label for="birthmass-slider">Massa inicial</label><output class="slider-value" id="birthmass-value">15 M☉</output></div>
+        <input type="range" id="birthmass-slider" min="0.5" max="60" step=".5" value="15"><div class="slider-note">A massa inicial influencia a evolução e o tipo de remanescente.</div>
+      </div>
+      <div class="form-group">
+        <div class="slider-head"><label for="life-slider">Etapas da evolução</label><output class="slider-value" id="life-value">100%</output></div>
+        <input type="range" id="life-slider" min="0" max="100" step="1" value="100">
+        <div class="timeline-markers"><span>Nascimento</span><span>Estrela</span><span>Gigante</span><span>Destino</span></div>
+        <div class="slider-note">O controle mostra etapas, <strong>não uma escala de tempo</strong>. Cada fase tem duração diferente.</div>
+      </div>
+      <div class="result-card"><div class="r-title">Destino provável no modelo</div><div class="r-value" id="evolution-result">Estrela de nêutrons</div><div class="r-note" id="evolution-explanation">Uma estrela massiva pode explodir como supernova, deixando um núcleo ultradenso.</div></div>
+      <p class="small-text" style="margin-top:18px">Faixas de massa inicial ilustrativas: abaixo de ~8 M☉, anã branca; ~8–25 M☉, estrela de nêutrons; acima de ~25 M☉, buraco negro. <strong style="color:#c3d9ff">Na realidade, perda de massa, composição química e outros fatores alteram essas faixas.</strong></p>
+    </section>
+
+    <section id="collapse-panel" class="hidden" aria-label="Experimento de compressão gravitacional">
+      <span class="mini-pill">EXPERIMENTO 02</span>
+      <h2 style="font-size:21px;letter-spacing:-.03em;margin:0 0 7px">E se comprimíssemos uma estrela?</h2>
+      <p class="small-text" style="margin:0 0 21px">Mantenha uma massa e reduza o raio. Observe quando ela cruza o limite matemático de um buraco negro <strong style="color:#fff">sem rotação</strong>.</p>
+      <div class="form-group"><div class="slider-head"><label for="collapse-mass-slider">Massa do objeto</label><output class="slider-value" id="collapse-mass-value">1,00 M☉</output></div><input type="range" id="collapse-mass-slider" min=".5" max="30" step=".5" value="1"></div>
+      <div class="form-group"><div class="slider-head"><label for="radius-slider">Raio do objeto</label><output class="slider-value" id="radius-value">696.000 km</output></div><input type="range" id="radius-slider" min="0" max="5.844" step=".006" value="5.844"><div class="slider-note">Controle logarítmico: deslize à esquerda para comprimir muito.</div></div>
+      <div class="result-card"><div class="r-title">Horizonte de eventos previsto</div><div class="r-value" id="schwarz-value">2,95 km</div><div class="r-note" id="collapse-result">O objeto ainda é maior que seu raio de Schwarzschild.</div></div>
+      <div class="form-group"><div class="slider-head"><span style="font-weight:700;color:#cbd8ed;font-size:12px">Compacidade (Rₛ ÷ R)</span><output class="slider-value" id="compactness-value">0%</output></div><div style="height:8px;background:#2b3851;border-radius:30px;overflow:hidden"><div id="compactness-bar" style="height:100%;width:0;background:linear-gradient(90deg,#56c7da,#a7a1ff,#ffb66b);transition:width .15s"></div></div></div>
+      <div class="sidebar-note"><strong>Experimento imaginário.</strong> Comprimir matéria não transforma automaticamente uma estrela em anã branca ou estrela de nêutrons. Aqui isolamos o efeito de massa e raio sobre o horizonte. A forma e a cor intermediárias são apenas visuais.</div>
+    </section>
+  </aside>
+
+  <section class="stage" id="stage" aria-label="Visualização tridimensional interativa do corpo celeste">
+    <canvas id="space-canvas" aria-label="Representação 3D artística do astro selecionado. Arraste para girar a câmera."></canvas><canvas id="fallback-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none"></canvas><div class="vignette" aria-hidden="true"></div>
+    <div class="stage-heading"><span class="status-pill"><span class="status-dot"></span><span id="category-label">REMANESCENTE ESTELAR</span></span><h1 id="stage-title">Estrela de nêutrons</h1><p id="stage-description">Uma cidade inteira de matéria ultradensa girando no espaço.</p></div>
+    <div class="stage-actions" aria-label="Ações da câmera"><button class="round-btn" id="zoom-in" title="Aproximar" aria-label="Aproximar">＋</button><button class="round-btn" id="zoom-out" title="Afastar" aria-label="Afastar">−</button><button class="round-btn" id="reset-camera" title="Centralizar câmera" aria-label="Centralizar câmera">⌖</button><button class="round-btn" id="pause" title="Pausar ou retomar animação" aria-label="Pausar animação">Ⅱ</button><button class="round-btn" id="share" title="Compartilhar laboratório" aria-label="Compartilhar laboratório">↗</button><button class="round-btn" id="help" title="Como usar" aria-label="Como usar">?</button></div>
+    <div class="stage-footer"><div class="interaction-hint"><span class="hint-desktop">↔ Arraste para girar o 3D &nbsp;·&nbsp; Use a roda do mouse para aproximar</span><span class="hint-mobile">↔ Arraste para girar &nbsp;·&nbsp; Use dois dedos para aproximar</span></div><div class="metric-strip" aria-label="Indicadores físicos"><div class="metric"><div class="metric-k" id="metric1-label">Massa</div><div class="metric-v" id="metric1-value">1,40 M☉</div></div><div class="metric"><div class="metric-k" id="metric2-label">Raio aproximado</div><div class="metric-v" id="metric2-value">12 km</div></div><div class="metric"><div class="metric-k" id="metric3-label">Densidade média</div><div class="metric-v" id="metric3-value">4 × 10¹⁷ kg/m³</div></div></div></div>
+    <div id="no-webgl" class="no-webgl">Seu navegador não ativou o WebGL. Tente usar uma versão atual do Chrome, Edge, Firefox ou Safari.</div>
+  </section>
+
+  <aside class="right" aria-label="Explicações e atividades didáticas">
+    <h2 class="right-heading">Aprenda observando</h2>
+    <div class="info-card"><div class="info-top"><span class="info-symbol">◉</span>O que está acontecendo?</div><p id="learn-text">Uma estrela de nêutrons pode se formar após o colapso do núcleo de uma estrela massiva. Sua densidade é extraordinária.</p></div>
+    <div class="info-card"><div class="info-top"><span class="info-symbol">⌕</span>O que observar</div><ul id="observe-list"><li>Feixes de radiação saem da região dos polos magnéticos.</li><li>A rotação pode produzir pulsos observados à distância.</li></ul></div>
+    <div class="info-card fact-card"><div class="info-top"><span class="info-symbol">✧</span>Você sabia?</div><p id="fact-text">Uma estrela de nêutrons concentra mais massa que o Sol em uma esfera de poucos quilômetros.</p></div>
+    <div class="info-card challenge-card"><div class="info-top"><span class="info-symbol">⚑</span>Desafio científico</div><p id="challenge-question" class="challenge-question">O que acontece com o farol de uma estrela de nêutrons quando a rotação diminui?</p><button class="soft-button" id="answer-toggle" aria-expanded="false">Revelar explicação</button><p class="challenge-answer hidden" id="challenge-answer">A frequência dos pulsos diminui. Só veremos pulsos se o feixe passar por nossa direção.</p></div>
+    <div class="sources"><div class="section-title">Fontes para o professor</div><a href="https://science.nasa.gov/universe/black-holes/anatomy/" target="_blank" rel="noopener">NASA · Anatomia do buraco negro</a><a href="https://eventhorizontelescope.org/faq/how-realistic-are-movie-depictions-black-holes-eg-interstellar" target="_blank" rel="noopener">EHT · Cinema e efeito Doppler</a><a href="https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-pulsars/" target="_blank" rel="noopener">NASA · Pulsares</a><a href="https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-quasars/" target="_blank" rel="noopener">NASA · Quasares e acreção</a><a href="https://www.energy.gov/science/np/articles/how-large-are-neutron-stars" target="_blank" rel="noopener">DOE · Tamanho de estrelas de nêutrons</a></div>
+    <p class="footer-sign">Visualização artística e científica simplificada · Ensino médio · Sem necessidade de cadastro</p>
+    <p class="footer-credit">Criado por <strong>Diogo Paes da Costa</strong> (2026) · V 1.0</p>
+  </aside>
+</main>
+<dialog id="help-dialog"><button class="modal-close" id="close-help" aria-label="Fechar janela">✕</button><h2>Como usar o Cosmos Lab 3D</h2><ul><li><strong>Explorar:</strong> escolha um astro e mude sua massa, temperatura, rotação ou alimentação por gás.</li><li><strong>Evolução:</strong> altere a massa inicial de uma estrela e avance as fases para ver um destino provável.</li><li><strong>Colapso:</strong> reduza o raio mantendo a massa. Veja quando o objeto alcança o raio de Schwarzschild.</li><li><strong>Modelo 3D:</strong> arraste para girar. No celular, pinça com dois dedos para aproximar.</li><li><strong>Aprofundar:</strong> nos buracos negros, compare o disco ao estilo de cinema e a assimetria do efeito Doppler, e mude o ângulo de visão. Na estrela de nêutrons, experimente comum, pulsar e magnetar.</li><li><strong>Atividade:</strong> leia as dicas e tente responder ao desafio antes de abrir a explicação.</li></ul><p><strong>Atenção científica:</strong> os tamanhos dos astros, brilhos, cores, velocidades de rotação, discos e jatos são representações artísticas, não estão na mesma escala. Os números exibidos usam fórmulas simplificadas ou parâmetros típicos, e nem todos os controles descrevem relações físicas quantitativas. Um quasar é um núcleo galáctico ativo alimentado por um buraco negro supermassivo, e não um estágio final normal de uma única estrela.</p><p>Este laboratório pode funcionar como um único arquivo HTML, sem bibliotecas externas. Para compartilhar como endereço de site, hospede o arquivo em um serviço estático, como GitHub Pages ou Netlify.</p></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const M_SUN=1.98847e30, R_SUN_KM=695700, AU_KM=149597870.7, RS_PER_SOLAR=2.95325;
+const ptNum=(n,d=0)=>Number(n).toLocaleString('pt-BR',{maximumFractionDigits:d,minimumFractionDigits:d});
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const presets={
+ sun:{type:0,mass:1,temp:5800,spin:28,feed:0,field:0},
+ giant:{type:1,mass:3,temp:3600,spin:14,feed:0,field:0},
+ dwarf:{type:2,mass:.8,temp:18000,spin:24,feed:0,field:0},
+ neutron:{type:3,mass:1.4,temp:600000,spin:55,feed:0,field:80},
+ blackhole:{type:4,mass:10,temp:0,spin:55,feed:65,field:0},
+ quasar:{type:5,mass:1e8,temp:0,spin:65,feed:90,field:0}
+};
+const info={
+ sun:{category:'ESTRELA EM ATIVIDADE',title:'Estrela',subtitle:'A gravidade comprime. A fusão nuclear ajuda a sustentar a estrela.',learn:'Em estrelas como o Sol, a fusão de hidrogênio em hélio libera energia. A pressão interna contrabalança a gravidade durante a maior parte de sua vida.',observe:['Aumente a temperatura para perceber a mudança ilustrativa de cor.','Uma estrela mais massiva costuma consumir combustível mais rapidamente.'],fact:'O Sol converte parte de sua massa em energia continuamente. Sua luz demora cerca de oito minutos para chegar à Terra.',question:'Uma estrela duas vezes mais massiva costuma viver mais ou menos tempo que o Sol?',answer:'Em geral, menos. Estrelas muito massivas possuem mais combustível, mas o consomem muito mais rapidamente.'},
+ giant:{category:'FASE EVOLUTIVA ESTELAR',title:'Gigante vermelha',subtitle:'Após mudanças no núcleo, camadas externas podem se expandir enormemente.',learn:'Quando o combustível do núcleo diminui e a estrutura interna muda, muitas estrelas se expandem e esfriam na superfície, assumindo aparência avermelhada.',observe:['Compare a temperatura com a de uma estrela como o Sol.','O raio pode aumentar muito, mesmo que a temperatura superficial caia.'],fact:'O Sol deverá passar por uma fase de gigante vermelha daqui a bilhões de anos.',question:'Gigante vermelha é necessariamente mais quente na superfície?',answer:'Não. Sua superfície costuma ser mais fria que a de uma estrela como o Sol, embora ela possa ser muito mais luminosa pelo tamanho.'},
+ dwarf:{category:'REMANESCENTE ESTELAR',title:'Anã branca',subtitle:'Um núcleo estelar pequeno, quente e extremamente denso.',learn:'Uma anã branca é o núcleo remanescente de uma estrela de baixa ou média massa. Não sustenta fusão nuclear estável e esfria lentamente com o tempo.',observe:['Aumentar a massa tende a diminuir o raio em um modelo simplificado.','A luz visível é calor residual, não uma nova fase de fusão estável.'],fact:'Uma anã branca típica tem tamanho comparável ao da Terra, mas concentra uma fração importante da massa solar.',question:'Por que uma anã branca não colapsa imediatamente?',answer:'A matéria é sustentada principalmente pela pressão de degenerescência dos elétrons, até um limite próximo de 1,4 massas solares.'},
+ neutron:{category:'REMANESCENTE ESTELAR',title:'Estrela de nêutrons',subtitle:'Mais massa que o Sol comprimida em uma esfera de cerca de 12 km de raio.',learn:'O núcleo de uma estrela massiva pode sobreviver ao colapso como estrela de nêutrons. Algumas giram rapidamente e apresentam feixes de radiação magnética: são os pulsares.',observe:['Aumente a rotação ilustrativa para ver o efeito de farol.','Diminua os feixes magnéticos para observar a diferença na emissão simulada.'],fact:'Uma estrela de nêutrons pode concentrar aproximadamente 1,4 massas solares em um raio próximo de 12 km.',question:'Se o feixe não apontar na nossa direção, deixaremos de ter um pulsar?',answer:'O objeto continua sendo uma estrela de nêutrons. Podemos deixar de detectar os pulsos porque o feixe não cruza nossa linha de visão.'},
+ blackhole:{category:'OBJETO COMPACTO EXTREMO',title:'Buraco negro',subtitle:'O horizonte de eventos marca a região de onde nem a luz consegue escapar.',learn:'O buraco negro não é uma esfera brilhante. A luz ilustrada vem do gás aquecido ao redor, no disco de acreção. Sua gravidade também desvia trajetórias da luz.',observe:['Reduza a alimentação por gás até zero e veja o disco desaparecer.','A massa determina a escala do raio do horizonte de eventos.'],fact:'Se o Sol tivesse a mesma massa, mas fosse comprimido até um raio de cerca de 3 km, formaria um buraco negro no modelo sem rotação.',question:'Um buraco negro sem gás ao redor continua emitindo um disco brilhante?',answer:'Não. O disco brilhante depende de matéria orbitando e aquecendo fora do horizonte. O próprio buraco negro não emite essa luz.'},
+ quasar:{category:'NÚCLEO GALÁCTICO ATIVO',title:'Quasar',subtitle:'Um buraco negro supermassivo alimentado por gás pode tornar o núcleo de sua galáxia extremamente luminoso.',learn:'Um quasar não é outro tipo de estrela. Ele é um núcleo galáctico ativo, geralmente com um buraco negro supermassivo que recebe muita matéria e irradia intensamente.',observe:['Diminua o gás em acreção para desligar o brilho do núcleo ativo.','Os jatos exibidos são possíveis, mas nem todo quasar possui jatos grandes e observáveis.'],fact:'Alguns quasares são luminosos o suficiente para serem vistos a distâncias de bilhões de anos-luz.',question:'Basta aumentar a massa de uma estrela de nêutrons para criar um quasar?',answer:'Não. Um quasar exige um ambiente galáctico com um buraco negro supermassivo alimentado por matéria. Não é um estágio final comum de uma única estrela.'}
+};
+const state={mode:'explore',body:'neutron',...presets.neutron,birthMass:15,life:100,collapseMass:1,radiusExp:5.8427,playing:true,yaw:0.56,pitch:0.30,zoom:1,showHelp:false,neutronScenario:'pulsar',lightProfile:'cinema',jetOn:true};
+let currentVisual={...presets.neutron,eruption:0,radiusFactor:1},currentInfo=info.neutron,renderStart=performance.now(),lastFrame=0,clock=0;
+const visual={$canvas:$('space-canvas'),gl:null,program:null,uniforms:{},buffer:null};
+
+// O endereço compartilhado pode carregar a configuração da experiência.
+function getShareUrl(){
+ const data={v:1,mode:state.mode,body:state.body,mass:state.mass,temp:state.temp,spin:state.spin,feed:state.feed,field:state.field,neutronScenario:state.neutronScenario,lightProfile:state.lightProfile,jetOn:state.jetOn,pitch:state.pitch,yaw:state.yaw,zoom:state.zoom,birthMass:state.birthMass,life:state.life,collapseMass:state.collapseMass,radiusExp:state.radiusExp};
+ const url=new URL(location.href);url.hash='lab='+encodeURIComponent(JSON.stringify(data));return url.href;
+}
+function restoreFromHash(){
+ try{
+  if(!location.hash.startsWith('#lab='))return false;
+  const d=JSON.parse(decodeURIComponent(location.hash.slice(5)));
+  if(d.v!==1||!Object.prototype.hasOwnProperty.call(presets,d.body))return false;
+  state.body=d.body;Object.assign(state,presets[d.body]);
+  const ranges={sun:[.5,30],giant:[.8,25],dwarf:[.3,1.35],neutron:[1.1,2.3],blackhole:[3,70],quasar:[1e6,3.1623e10]};
+  function number(key,min,max){if(typeof d[key]==='number'&&Number.isFinite(d[key]))state[key]=clamp(d[key],min,max)}
+  number('mass',...ranges[d.body]);number('temp',2500,70000);number('spin',0,100);number('feed',0,100);number('field',0,100);
+  number('birthMass',.5,60);number('life',0,100);number('collapseMass',.5,30);number('radiusExp',0,5.844);number('pitch',-1.27,1.27);number('yaw',-50,50);number('zoom',.6,2.3);
+  if(['normal','pulsar','magnetar'].includes(d.neutronScenario))state.neutronScenario=d.neutronScenario;
+  if(['cinema','physics'].includes(d.lightProfile))state.lightProfile=d.lightProfile;
+  if(typeof d.jetOn==='boolean')state.jetOn=d.jetOn;
+  state.mode=['explore','evolution','collapse'].includes(d.mode)?d.mode:'explore';
+  return true;
+ }catch(e){return false}
+}
+function selectMode(mode){state.mode=mode;document.querySelectorAll('.mode-tab').forEach(el=>{let active=el.dataset.mode===mode;el.classList.toggle('active',active);el.setAttribute('aria-selected',active?'true':'false')});['explore','evolution','collapse'].forEach(k=>$(k+'-panel').classList.toggle('hidden',k!==mode));updateAll();}
+function selectBody(id){state.body=id;Object.assign(state,presets[id]);if(id==='neutron')state.neutronScenario='pulsar';document.querySelectorAll('.preset').forEach(el=>el.classList.toggle('active',el.dataset.body===id));updateSliderRanges();updateAll();}
+function setNeutronScenario(mode){state.neutronScenario=mode;const scenario={normal:{spin:16,field:0},pulsar:{spin:72,field:77},magnetar:{spin:13,field:80}}[mode];if(!scenario)return;Object.assign(state,scenario);updateSliderRanges();updateAll()}
+function updateSceneChoices(){document.querySelectorAll('[data-neutron]').forEach(b=>{let on=b.dataset.neutron===state.neutronScenario;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});document.querySelectorAll('[data-light]').forEach(b=>{let on=b.dataset.light===state.lightProfile;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});$('jet-toggle').checked=state.jetOn;$('field-label').textContent=state.neutronScenario==='magnetar'?'Atividade magnética':'Feixes de radiação';$('field-note').textContent=state.neutronScenario==='magnetar'?'Ajuste didático do brilho das linhas de campo e de episódios energéticos. O campo é invisível.':'Em alguns pulsares, o campo magnético orienta feixes de radiação.';
+ $('neutron-scenario-note').textContent=state.neutronScenario==='magnetar'?'Magnetar: campo magnético excepcional, emissão variável e possíveis explosões de alta energia. As linhas luminosas representam o campo, que é invisível.':state.neutronScenario==='pulsar'?'Pulsar: feixes de radiação giram; vemos pulsos apenas se um deles cruzar nossa direção.':'Estrela comum: nem toda estrela de nêutrons tem feixes detectáveis ou apresenta pulsos.';
+ $('light-note').textContent=state.lightProfile==='cinema'?'Cinema: realça o disco relativamente simétrico, inspirado na leitura visual de Interstellar.':'Doppler: o lado do gás que vem em nossa direção fica mais brilhante que o outro.';
+ const angle=Math.round(90-Math.abs(state.pitch)*180/Math.PI);$('angle-slider').value=clamp(angle,0,90);$('angle-value').textContent=clamp(angle,0,90)+'°';sliderFill($('angle-slider'));}
+
+function sliderFill(el){let v=(Number(el.value)-Number(el.min))/(Number(el.max)-Number(el.min))*100;el.style.setProperty('--fill',clamp(v,0,100)+'%')}
+function updateSliderRanges(){const m=$('mass-slider'),t=$('temperature-slider');let ranges={sun:[.5,30,.1],giant:[.8,25,.1],dwarf:[.3,1.35,.01],neutron:[1.1,2.3,.01],blackhole:[3,70,1],quasar:[6,10.5,.05]};const [min,max,step]=ranges[state.body];m.min=min;m.max=max;m.step=step;m.value=state.body==='quasar'?Math.log10(state.mass):state.mass;
+let temps={sun:[3000,16000,100],giant:[2500,5500,50],dwarf:[6000,70000,500]};let showTemp=!!temps[state.body];$('temperature-group').classList.toggle('hidden',!showTemp);if(showTemp){let [mi,ma,st]=temps[state.body];t.min=mi;t.max=ma;t.step=st;t.value=state.temp}
+$('feed-group').classList.toggle('hidden',!(state.body==='blackhole'||state.body==='quasar'));$('field-group').classList.toggle('hidden',state.body!=='neutron');$('neutron-scenarios').classList.toggle('hidden',state.body!=='neutron');$('astro-advanced').classList.toggle('hidden',!(state.body==='blackhole'||state.body==='quasar'));$('jet-line').classList.toggle('hidden',state.body!=='quasar');$('spin-slider').value=state.spin;$('feed-slider').value=state.feed;$('field-slider').value=state.field;['mass-slider','temperature-slider','spin-slider','feed-slider','field-slider'].forEach(id=>sliderFill($(id)));updateSceneChoices()}
+function formatMass(m){if(m>=1e9)return ptNum(m/1e9,1)+' bilhões M☉';if(m>=1e6)return ptNum(m/1e6,1)+' milhões M☉';return ptNum(m,m>=100?0:2)+' M☉'}
+function fmtRadius(km){if(km>=AU_KM*.1)return ptNum(km/AU_KM,2)+' UA';if(km>=1e6)return ptNum(km/1e6,2)+' mi km';if(km>=1000)return ptNum(km,0)+' km';return ptNum(km,km<100?2:0)+' km'}
+function fmtDensity(m,km){let density=m*M_SUN/(4/3*Math.PI*Math.pow(km*1000,3));if(!isFinite(density)||density<=0)return '—';let exponent=Math.floor(Math.log10(density));let mant=density/Math.pow(10,exponent);return ptNum(mant,1)+' × 10'+sup(exponent)+' kg/m³'}
+function sup(n){return String(n).replace(/-/g,'⁻').replace(/\d/g,d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)])}
+function radiusFor(type,m){if(type===0)return R_SUN_KM*Math.pow(m,.8);if(type===1)return R_SUN_KM*80*Math.pow(m/3,.3);if(type===2)return R_SUN_KM*.012*Math.pow(.6/m,1/3);if(type===3)return 12;if(type===4||type===5)return RS_PER_SOLAR*m;return R_SUN_KM}
+function setInfo(content,extra){currentInfo=content;$('category-label').textContent=extra?.category??content.category;$('stage-title').textContent=extra?.title??content.title;$('stage-description').textContent=extra?.subtitle??content.subtitle;$('learn-text').textContent=extra?.learn??content.learn;$('fact-text').textContent=extra?.fact??content.fact;$('observe-list').replaceChildren(...(extra?.observe??content.observe).map(t=>{let li=document.createElement('li');li.textContent=t;return li}));$('challenge-question').textContent=extra?.question??content.question;$('challenge-answer').textContent=extra?.answer??content.answer;$('challenge-answer').classList.add('hidden');$('answer-toggle').textContent='Revelar explicação';$('answer-toggle').setAttribute('aria-expanded','false')}
+function setMetrics(labels,values){for(let i=1;i<=3;i++){$('metric'+i+'-label').textContent=labels[i-1];$('metric'+i+'-value').textContent=values[i-1]}}
+function setExplore(){const typ=state.type,m=state.mass,rad=radiusFor(typ,m);currentVisual={type:typ,heat:state.temp,spin:state.spin/100,feed:state.feed/100,field:state.field/100,mass:m,eruption:0,radiusFactor:1,doppler:state.lightProfile==='physics'?1:0,magnetar:state.body==='neutron'&&state.neutronScenario==='magnetar'?1:0,jets:state.body==='quasar'&&state.jetOn?1:0};let active=info[state.body],ex={};if(state.body==='neutron'&&state.spin>0&&state.field>10){ex.title='Estrela de nêutrons · Feixes em rotação';ex.subtitle='Se um feixe cruzar nossa direção, veremos pulsos, como um farol cósmico.'}
+if(state.body==='neutron'&&state.neutronScenario==='magnetar'){ex={category:'ESTRELA DE NÊUTRONS · CAMPO EXTREMO',title:'Magnetar',subtitle:'Uma estrela de nêutrons com campo magnético extraordinariamente intenso.',learn:'Um magnetar é uma estrela de nêutrons cujo campo magnético pode atingir cerca de 10¹⁰–10¹¹ teslas. Parte de sua atividade pode liberar fortes emissões de raios X e raios gama. As linhas e arcos visuais são didáticos.',observe:['Compare o magnetar com o pulsar usando os botões de cenário.','O brilho dos arcos não representa luz visível emitida diretamente pelo campo magnético.'],fact:'Magnetar não é um tipo de buraco negro: é uma variedade de estrela de nêutrons.',question:'Um campo magnético mais forte faz uma estrela de nêutrons virar buraco negro?',answer:'Não. O campo magnético por si só não a transforma em buraco negro. O colapso depende da massa e das condições internas.'}}
+ if(state.body==='neutron'&&state.neutronScenario==='normal'){ex={category:'REMANESCENTE ESTELAR',title:'Estrela de nêutrons',subtitle:'Nem toda estrela de nêutrons apresenta pulsos de rádio detectáveis.'}}
+ if(state.body==='quasar'&&state.feed<12){ex.title='Núcleo galáctico inativo';ex.category='BURACO NEGRO SUPERMASSIVO';ex.subtitle='Sem alimentação abundante, o brilho intenso associado ao quasar desaparece.';ex.learn='O buraco negro supermassivo ainda existe, mas sem acreção luminosa suficiente não o identificamos como um quasar ativo.'}
+if(state.body==='quasar'&&state.feed>=12&&state.feed<45){ex.title='Núcleo galáctico em atividade';ex.subtitle='O gás em queda aquece e faz o núcleo brilhar. A intensidade exibida é conceitual.'}
+setInfo(active,ex);
+$('mass-value').textContent=formatMass(m);$('mass-note').textContent=state.body==='quasar'?'Escala logarítmica. M☉ significa massa do Sol.':'M☉ significa massa solar; altera parâmetros físicos e as medidas.';$('temperature-value').textContent=ptNum(state.temp)+' K';$('spin-value').textContent=ptNum(state.spin)+'%';$('feed-value').textContent=ptNum(state.feed)+'%';$('field-value').textContent=ptNum(state.field)+'%';
+const metric3=typ===2||typ===3?'Densidade média':typ<2?'Luminosidade aprox.':'Gás em acreção';let val3=(typ===2||typ===3)?fmtDensity(m,rad):typ<2?fmtLuminosity(rad,state.temp):ptNum(state.feed)+'%';setMetrics(['Massa',typ>=4?'Raio do horizonte':'Raio aproximado',metric3],[formatMass(m),fmtRadius(rad),val3]);}
+function fmtLuminosity(rkm,temp){const l=Math.pow(rkm/R_SUN_KM,2)*Math.pow(temp/5772,4);return (l>=10000?ptNum(l/1000,1)+' mil':l>=100?ptNum(l,0):l>=.01?ptNum(l,2):l.toExponential(1).replace('.',','))+' L☉'}
+function evoOutcome(m){return m<8?'dwarf':m<25?'neutron':'blackhole'}
+function setEvolution(){let birth=state.birthMass,life=state.life,out=evoOutcome(birth);$('birthmass-value').textContent=formatMass(birth);$('life-value').textContent=ptNum(life)+'%';let outcomeText=info[out].title;$('evolution-result').textContent=outcomeText;
+$('evolution-explanation').textContent=out==='dwarf'?'A estrela perde suas camadas externas e deixa um núcleo compacto que esfria.':out==='neutron'?'O núcleo pode colapsar e deixar uma estrela de nêutrons.':'O núcleo massivo pode colapsar até formar um buraco negro.';
+let type=0,heat=5800,spin=.3,feed=0,field=0,remMass=birth,erupt=0,stage='sequência principal';let extra={};let rad=R_SUN_KM;
+if(life<65){type=0;heat=clamp(5800*Math.pow(birth,.28),3600,19000);stage='Sequência principal';extra={category:'EVOLUÇÃO ESTELAR · ETAPA 1',title:'Estrela na sequência principal',subtitle:'A fusão nuclear ajuda a sustentar o astro contra a gravidade.',learn:'Nesta etapa, o núcleo transforma hidrogênio em hélio. A duração real depende fortemente da massa da estrela.',observe:['Compare uma estrela pouco massiva com uma muito massiva.','Avance o ciclo de vida para ver a expansão das camadas externas.'],fact:'Estrelas muito massivas costumam viver por menos tempo que estrelas semelhantes ao Sol.'};rad=radiusFor(0,birth)}
+else if(life<85){type=1;heat=3600;stage='Fase gigante';extra={category:'EVOLUÇÃO ESTELAR · ETAPA 2',title:birth<8?'Gigante vermelha':'Supergigante vermelha',subtitle:'Camadas externas se expandem após mudanças no núcleo.',learn:'A estrela se expande e muda sua estrutura interna. Estrelas suficientemente massivas podem evoluir até um colapso do núcleo.',observe:['A superfície se torna mais fria e avermelhada.','O volume aumenta muito em relação à fase anterior.'],fact:'Uma superfície mais fria não significa necessariamente uma estrela menos luminosa.'};rad=radiusFor(1,birth)}
+else if(life<94){type=out==='dwarf'?2:1;heat=out==='dwarf'?18000:4300;erupt=clamp((life-84)/9,0,1);rad=out==='dwarf'?radiusFor(2,.6):radiusFor(1,birth);stage=out==='dwarf'?'Nebulosa planetária':'Explosão de supernova';extra={category:'EVOLUÇÃO ESTELAR · TRANSIÇÃO',title:stage,subtitle:out==='dwarf'?'Camadas externas são ejetadas. O núcleo remanescente permanece quente.':'O núcleo sofre colapso e pode ocorrer uma supernova.',learn:out==='dwarf'?'A expulsão das camadas externas cria uma nebulosa planetária. Não se trata de uma explosão de supernova.':'Em estrelas massivas, o colapso do núcleo pode produzir uma supernova. Nem todo colapso gera uma explosão observável.',observe:['Esta etapa é representada por um brilho e uma concha ilustrativos.','Continue até o fim para descobrir o remanescente.'],fact:'O brilho da transição foi exagerado para tornar o fenômeno visível.'}}
+else{stage='Remanescente';type=presets[out].type;heat=presets[out].temp;spin=presets[out].spin/100;field=out==='neutron'?.8:0;feed=out==='blackhole'?.5:0;remMass=out==='dwarf'?clamp(.52+.065*(birth-1),.5,1.25):out==='neutron'?clamp(1.35+.025*(birth-8),1.3,2.1):clamp(4+(birth-25)*.37,4,22);rad=radiusFor(type,remMass);extra={category:'EVOLUÇÃO ESTELAR · DESTINO',title:'Destino · '+info[out].title,subtitle:out==='dwarf'?'Restou um núcleo quente que esfriará lentamente.':out==='neutron'?'O núcleo extremamente denso pode girar como um pulsar.':'Um horizonte de eventos delimita o buraco negro formado.',learn:info[out].learn,observe:info[out].observe,fact:info[out].fact}}
+if(life<94)remMass=birth;currentVisual={type,heat,spin,feed,field,mass:remMass,eruption:erupt,radiusFactor:1,doppler:1,magnetar:0,jets:0};setInfo(info[out],extra);setMetrics(['Massa '+(life>=94?'do remanescente':'representada'),'Raio '+(type>=4?'do horizonte':'ilustrativo'),'Fase'],[formatMass(remMass),fmtRadius(rad),stage]);}
+function setCollapse(){let mass=state.collapseMass,rad=Math.pow(10,state.radiusExp),rs=RS_PER_SOLAR*mass,ratio=rs/rad,isBH=ratio>=1;let type=isBH?4:rad<=10000?2:0;
+currentVisual={type,heat:rad<=10000?22000:5500,spin:.16,feed:0,field:0,mass,eruption:0,radiusFactor:clamp(1.1-.08*Math.log10(Math.max(rad,3)/3),.72,1.2),doppler:0,magnetar:0,jets:0};
+$('collapse-mass-value').textContent=formatMass(mass);$('radius-value').textContent=fmtRadius(rad);$('schwarz-value').textContent=fmtRadius(rs);$('compactness-value').textContent=ratio>=1?'100% (limite cruzado)':ptNum(100*ratio,ratio<.01?4:1)+'%';$('compactness-bar').style.width=clamp(ratio*100,0,100)+'%';$('collapse-result').textContent=isBH?'O raio está no limite ou dentro do horizonte previsto.':'O objeto ainda é maior que seu raio de Schwarzschild.';
+let text=isBH?{category:'EXPERIMENTO · HORIZONTE FORMADO',title:'Buraco negro',subtitle:'R ≤ 2GM/c²: cruzamos o limite de Schwarzschild.',learn:'No modelo idealizado de um objeto esférico sem rotação, o horizonte de eventos surge quando a massa fica concentrada dentro do raio de Schwarzschild.',observe:['O horizonte depende da massa e não da cor ou da composição.','Aumente a massa sem mudar o raio: o raio de Schwarzschild cresce.'],fact:'Se toda a massa do Sol fosse comprimida em uma esfera de raio aproximado de 3 km, haveria um horizonte de eventos neste modelo.'}:{category:'EXPERIMENTO · COMPRESSÃO',title:rad>10000?'Estrela sob compressão':'Corpo compacto hipotético',subtitle:'A matéria é comprimida, mas o horizonte ainda não foi atingido.',learn:'O raio diminui enquanto a massa é mantida. A intensidade da gravidade perto da superfície aumenta. A aparência representada é imaginária, não uma evolução estelar real.',observe:['Movimente o raio devagar para encontrar o ponto em que R = Rₛ.','Se a massa dobrar, o raio de Schwarzschild também dobra.'],fact:'O raio de Schwarzschild de um objeto sem rotação cresce linearmente com sua massa.'};
+text.question='Apenas reduzir o raio, mantendo a massa, muda o raio de Schwarzschild?';text.answer='Não. Rₛ = 2GM/c² depende da massa (no modelo sem rotação), não do raio atual do objeto.';setInfo(info.blackhole,text);setMetrics(['Massa constante','Raio atual','Raio de Schwarzschild'],[formatMass(mass),fmtRadius(rad),fmtRadius(rs)]);}
+function updateAll(){if(state.mode==='explore')setExplore();else if(state.mode==='evolution')setEvolution();else setCollapse();renderOnce()}
+function toast(message){$('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toast._timer);toast._timer=setTimeout(()=>$('toast').classList.remove('show'),4000)}
+function initUI(){document.querySelectorAll('[data-neutron]').forEach(b=>b.addEventListener('click',()=>setNeutronScenario(b.dataset.neutron)));
+ document.querySelectorAll('[data-light]').forEach(b=>b.addEventListener('click',()=>{state.lightProfile=b.dataset.light;updateSceneChoices();updateAll()}));
+ $('jet-toggle').addEventListener('change',e=>{state.jetOn=e.target.checked;updateAll()});
+ $('angle-slider').addEventListener('input',e=>{let v=Number(e.target.value);state.pitch=Math.min(1.5705,Math.max(.0003,(90-v)*Math.PI/180));updateSceneChoices();renderOnce()});
+ document.querySelectorAll('.mode-tab').forEach(el=>el.addEventListener('click',()=>selectMode(el.dataset.mode)));document.querySelectorAll('.preset').forEach(el=>el.addEventListener('click',()=>selectBody(el.dataset.body)));
+$('mass-slider').addEventListener('input',e=>{state.mass=state.body==='quasar'?Math.pow(10,Number(e.target.value)):Number(e.target.value);sliderFill(e.target);updateAll()});
+$('temperature-slider').addEventListener('input',e=>{state.temp=Number(e.target.value);sliderFill(e.target);updateAll()});$('spin-slider').addEventListener('input',e=>{state.spin=Number(e.target.value);sliderFill(e.target);updateAll()});$('feed-slider').addEventListener('input',e=>{state.feed=Number(e.target.value);sliderFill(e.target);updateAll()});$('field-slider').addEventListener('input',e=>{state.field=Number(e.target.value);if(state.neutronScenario==='normal'&&state.field>4)state.neutronScenario='pulsar';sliderFill(e.target);updateSceneChoices();updateAll()});
+$('birthmass-slider').addEventListener('input',e=>{state.birthMass=Number(e.target.value);sliderFill(e.target);updateAll()});$('life-slider').addEventListener('input',e=>{state.life=Number(e.target.value);sliderFill(e.target);updateAll()});$('collapse-mass-slider').addEventListener('input',e=>{state.collapseMass=Number(e.target.value);sliderFill(e.target);updateAll()});$('radius-slider').addEventListener('input',e=>{state.radiusExp=Number(e.target.value);sliderFill(e.target);updateAll()});
+['birthmass-slider','life-slider','collapse-mass-slider','radius-slider'].forEach(id=>sliderFill($(id)));
+$('answer-toggle').addEventListener('click',()=>{let ans=$('challenge-answer'),hidden=ans.classList.toggle('hidden');$('answer-toggle').textContent=hidden?'Revelar explicação':'Ocultar explicação';$('answer-toggle').setAttribute('aria-expanded',String(!hidden))});
+$('zoom-in').addEventListener('click',()=>{state.zoom=clamp(state.zoom*1.18,.6,2.3);renderOnce()});$('zoom-out').addEventListener('click',()=>{state.zoom=clamp(state.zoom/1.18,.6,2.3);renderOnce()});$('reset-camera').addEventListener('click',()=>{state.yaw=.56;state.pitch=.30;state.zoom=1;updateSceneChoices();renderOnce()});$('pause').addEventListener('click',()=>{state.playing=!state.playing;$('pause').textContent=state.playing?'Ⅱ':'▶';$('pause').setAttribute('aria-label',state.playing?'Pausar animação':'Retomar animação');renderOnce()});
+$('share').addEventListener('click',async()=>{const local=!['https:','http:'].includes(location.protocol);const link=getShareUrl();if(!local&&navigator.share){try{await navigator.share({title:'Cosmos Lab 3D',text:'Explore meu experimento cósmico em 3D.',url:link});return}catch(e){if(e.name==='AbortError')return}}if(!local&&navigator.clipboard){try{await navigator.clipboard.writeText(link);toast('Link do experimento copiado! Compartilhe com a turma.');return}catch(e){}}toast('Para ter um link compartilhável, publique o HTML em um site estático gratuito. Você também pode enviar o arquivo como documento.');});
+$('help').addEventListener('click',()=>{$('help-dialog').showModal()});$('close-help').addEventListener('click',()=>$('help-dialog').close());$('help-dialog').addEventListener('click',e=>{if(e.target===$('help-dialog'))$('help-dialog').close()});
+const canvas=visual.$canvas;let pointerPositions=new Map(),drag=null,pinchDist=0;
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);pointerPositions.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointerPositions.size===1){drag={x:e.clientX,y:e.clientY};canvas.classList.add('dragging')}else if(pointerPositions.size===2){const p=[...pointerPositions.values()];pinchDist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y)}});
+canvas.addEventListener('pointermove',e=>{if(!pointerPositions.has(e.pointerId))return;pointerPositions.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointerPositions.size===1&&drag){let dx=e.clientX-drag.x,dy=e.clientY-drag.y;state.yaw+=dx*.007;state.pitch=clamp(state.pitch+dy*.006,-1.27,1.27);drag={x:e.clientX,y:e.clientY};updateSceneChoices();renderOnce()}else if(pointerPositions.size===2){let p=[...pointerPositions.values()],d=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);if(pinchDist>0)state.zoom=clamp(state.zoom*d/pinchDist,.6,2.3);pinchDist=d;renderOnce()}});
+const pointerEnd=e=>{pointerPositions.delete(e.pointerId);if(pointerPositions.size===0){drag=null;canvas.classList.remove('dragging')}else{drag=null;pinchDist=0}};canvas.addEventListener('pointerup',pointerEnd);canvas.addEventListener('pointercancel',pointerEnd);canvas.addEventListener('lostpointercapture',pointerEnd);
+canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*.0012),.6,2.3);renderOnce()},{passive:false});
+window.addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{lastFrame=0});
+ canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();visual.gl=null;initFallback()});
+ canvas.addEventListener('webglcontextrestored',()=>{visual.gl=null;visual.fallback=null;$('fallback-canvas').style.display='none';if(initWebGL())resize()});
+}
+
+// Renderização 3D WebGL feita com equações geométricas e fragment shader.
+// O algoritmo intersecta raios com esferas, planos e eixos no espaço 3D.
+// A luz desviada usa uma aproximação visual e não integra as geodésicas de Kerr/Schwarzschild.
+const vertexSource=`attribute vec2 a_pos; void main(){gl_Position=vec4(a_pos,0.,1.);}`;
+const fragmentSource=`
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time,u_kind,u_heat,u_spin,u_feed,u_field,u_burst,u_rfactor,u_zoom,u_doppler,u_jets,u_magnetar;
+uniform vec3 u_eye,u_right,u_up,u_forward;
+float h1(float n){return fract(sin(n)*43758.5453123);}
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise3(vec3 p){vec3 i=floor(p), f=fract(p);f=f*f*(3.0-2.0*f);float n=dot(i,vec3(1.,57.,113.));return mix(mix(mix(h1(n),h1(n+1.),f.x),mix(h1(n+57.),h1(n+58.),f.x),f.y),mix(mix(h1(n+113.),h1(n+114.),f.x),mix(h1(n+170.),h1(n+171.),f.x),f.y),f.z);}
+float fbm(vec3 p){float n=0.;n+=noise3(p)*.56;p*=2.03;n+=noise3(p)*.28;p*=2.12;n+=noise3(p)*.16;return n;}
+vec3 mix3(vec3 a,vec3 b,float t){return mix(a,b,clamp(t,0.,1.));}
+float raySphere(vec3 ro,vec3 rd,float r){float b=dot(ro,rd),c=dot(ro,ro)-r*r,det=b*b-c;if(det<0.)return -1.;float t=-b-sqrt(det);return t>0.?t:-1.;}
+vec3 bg(vec3 rd){
+ vec2 q=vec2(atan(rd.z,rd.x)*.78,asin(clamp(rd.y,-1.,1.))*.9);
+ float neb=fbm(vec3(q*1.65,5.3));float band=exp(-pow((q.y+.22+.12*sin(q.x*1.7))*1.9,2.));
+ vec3 col=vec3(.009,.017,.040)+vec3(.021,.017,.052)*neb+vec3(.015,.009,.033)*band*neb;
+ vec2 cell=vec2(atan(rd.z,rd.x)*160.,rd.y*270.);
+ vec2 id=floor(cell),f=fract(cell)-.5;float rnd=hash(id);vec2 of=vec2(hash(id+3.1),hash(id+7.7))*.54-.27;
+ float star=pow(max(0.,1.-length(f-of)*4.),13.);float visible=step(.9883,rnd);
+ col+=visible*star*(.65+2.4*pow(hash(id+4.4),6.))*mix3(vec3(.56,.74,1.),vec3(1.,.81,.65),hash(id+2.3));
+ vec2 id2=floor(cell*.41), f2=fract(cell*.41)-.5;float rnd2=hash(id2+61.);float s2=pow(max(0.,1.-length(f2)*3.9),18.);
+ col+=step(.995,rnd2)*s2*vec3(.31,.40,.76);
+ return col;
+}
+vec3 surface(vec3 pos,vec3 rd,float kind,float heat){
+ vec3 normal=normalize(pos);float theta=u_time*(.06+u_spin*.42);mat2 rot=mat2(cos(theta),-sin(theta),sin(theta),cos(theta));vec3 p=pos;p.xz=rot*p.xz;
+ float n=fbm(p*3.7+vec3(2.,1.,1.));float fine=noise3(p*27.);float limb=pow(max(.0,dot(normal,-rd)),.40);float lit=.78+.22*max(dot(normal,normalize(vec3(-.5,.8,1.))),0.);
+ vec3 a,b,c;
+ if(kind<.5){
+   // Superfície estelar luminosa, com granulação sutil, sem aspecto de rocha.
+   float warm=smoothstep(3000.,5800.,heat),blue=smoothstep(5800.,16000.,heat);
+   a=mix3(vec3(1.,.39,.16),vec3(1.,.88,.66),warm);
+   b=mix3(a,vec3(.72,.85,1.),blue);
+   float gran=fbm(p*13.7+vec3(.7,1.9,.2));
+   float spots=1.-.13*smoothstep(.75,.88,n);
+   c=b*spots*(.97+.08*gran+.025*fine)*1.56;
+ }
+ else if(kind<1.5){a=vec3(.86,.22,.11);b=vec3(1.,.46,.22);c=mix3(a,b,.32+.30*n);c*=1.22+ .045*fine;}
+ else if(kind<2.5){float t=clamp((heat-6000.)/64000.,0.,1.);a=mix3(vec3(.92,.94,1.),vec3(.70,.85,1.),t);c=mix3(a,vec3(1.,1.,1.),.64+.07*n);c*=1.34+.025*fine;}
+ else{a=vec3(.22,.40,.72);b=vec3(.65,.88,1.);c=mix3(a,b,.32+.47*n);float st=u_time*(.15+u_spin*2.);vec3 pole=normalize(vec3(.39*cos(st),.91,.39*sin(st)));float cap=pow(abs(dot(normal,pole)),24.);c+=cap*vec3(.66,.83,1.)*u_field*2.2;c*=1.10+.04*fine;}
+ return kind<2.5 ? c*(.74+.26*limb) : c*lit*(.53+.47*limb);
+}
+float lineBeam(vec3 ro,vec3 rd,vec3 axis,float extent,float width,out float axisProjection,out float depth){
+ float d=dot(rd,axis),den=max(1.-d*d,.0001);float e=dot(rd,ro),f=dot(axis,ro);
+ float s=clamp((f-d*e)/den,-extent,extent);float t=max(0.,dot(axis*s-ro,rd));vec3 closest=ro+rd*t;float dist=length(closest-axis*s);
+ axisProjection=s;depth=t;float widthAt=width*(.75+.42*abs(s));float core=exp(-pow(dist/max(.03,widthAt),2.))*(1.-smoothstep(extent*.71,extent,abs(s)));
+ float glow=exp(-pow(dist/(widthAt*2.9),2.))*(1.-smoothstep(extent*.74,extent,abs(s)));
+ return glow*.29+core*.98;
+}
+vec3 accretion(vec3 p,float kind,float time){float r=length(p.xz);float a=atan(p.z,p.x);float ang=a*8.-log(r)*13.+time*(.38+u_spin*.35);float turbulence=fbm(vec3(p.xz*1.85,time*.11));float swirl=sin(ang+2.1*turbulence)*.5+.5;
+ float window=smoothstep(1.14,1.37,r)*(1.-smoothstep(2.75,3.52,r));float heat=pow(1.6/max(r,1.1),.65);
+ float spl=pow(max(0.,sin(a*39.-log(r)*10.+turbulence*10.-time*1.5)),11.)*(.4+.6*turbulence);
+ vec3 cold=kind>4.5?vec3(.10,.28,.78):vec3(.43,.055,.016);vec3 hot=kind>4.5?vec3(.88,1.23,1.95):vec3(3.1,1.30,.43);
+ float inner=1.-smoothstep(1.45,3.40,r);
+ vec3 color=mix(cold,hot,clamp(.10+.64*swirl+.40*inner,0.,1.));
+ color+=spl*(kind>4.5?vec3(.50,.74,1.1):vec3(.85,.42,.12));
+ float approaching=clamp(p.x/max(r,1.),-1.,1.);
+ float boost=1.+u_doppler*.72*(-approaching);
+ color=mix(color,color*vec3(.89,1.,1.18),u_doppler*clamp(-approaching,0.,1.)*.45);
+ return color*max(.21,boost)*window*(.67+.55*turbulence)*max(.0,u_feed)*1.9;
+}
+vec3 lensDisk(vec2 sp, float kind, float elev, float t){
+ float x=abs(sp.x);float power=1.-smoothstep(.72,.995,elev);
+ float eo=sqrt(max(.0,1.-pow(x/3.50,2.)));
+ float ei=sqrt(max(.0,1.-pow(x/2.62,2.)));
+ float upperOut=.13+1.96*eo;
+ float upperIn=.012+.94*ei;
+ float uMask=smoothstep(upperIn-.12,upperIn+.10,sp.y)*(1.-smoothstep(upperOut-.12,upperOut+.12,sp.y))*(1.-smoothstep(3.12,3.57,x));
+ float lo=sqrt(max(.0,1.-pow(x/3.04,2.)));
+ float li=sqrt(max(.0,1.-pow(x/2.35,2.)));
+ float lowOut=.09+1.62*lo;
+ float lowIn=.03+1.02*li;
+ float lMask=smoothstep(lowIn-.07,lowIn+.09,-sp.y)*(1.-smoothstep(lowOut-.12,lowOut+.09,-sp.y))*(1.-smoothstep(2.78,3.18,x));
+ float shadow=smoothstep(1.10,1.22,length(sp));
+ float texture=fbm(vec3(sp.x*2.8,sp.y*5.3,t*.08));
+ float streak=.88+.10*sin(sp.x*16.+texture*6.-t*(.6+u_spin))+.035*sin(sp.x*43.+texture*11.);
+ float innerHot=1.-smoothstep(1.20,3.4,length(sp));
+ vec3 cool=kind>4.5?vec3(.10,.35,.88):vec3(.56,.09,.026);
+ vec3 hot=kind>4.5?vec3(.80,1.26,2.1):vec3(3.1,1.15,.30);
+ vec3 light=mix(cool,hot,clamp(.26+innerHot*.50+.28*texture,0.,1.));
+ float left=clamp(-sp.x/max(length(sp),.5),-1.,1.);
+ light*=1.+u_doppler*left*.78;
+ light=mix(light,light*vec3(.84,1.,1.22),max(0.,left)*u_doppler*.48);
+ return max(light,vec3(0.))*(uMask*.85+lMask*.52)*power*shadow*u_feed*max(streak,.16);
+}
+void main(){
+ vec2 uv=(gl_FragCoord.xy-.5*u_res.xy)/u_res.y;
+ vec3 ro=u_eye;
+ vec3 rd=normalize(u_forward*1.85 + u_right*uv.x*2.0 + u_up*uv.y*2.0);
+ float kind=u_kind;
+ float r=(kind<3.5)?u_rfactor:1.16;
+ vec3 col=bg(rd);
+ // Shadow is larger in apparent radius than the true event horizon.
+ // Stars behind the centre undergo a qualitative gravitational deflection.
+ if(kind>3.5 && length(cross(ro,rd))>r){float imp=length(cross(ro,rd));
+  if(imp<4.6){vec3 radial=normalize(cross(cross(ro,rd),rd));vec3 curved=normalize(rd-radial*(.14/max(.5,imp*imp)));
+    col=mix(col,bg(curved),(1.-smoothstep(2.1,4.6,imp))*.75);}}
+
+ float b=length(cross(ro,rd));float front=raySphere(ro,rd,r);
+ float diskT=-1.;vec3 disk=vec3(0.);
+ if(kind>3.5&&u_feed>.001&&abs(rd.y)>.0008){
+  diskT=-ro.y/rd.y;
+  if(diskT>0.){vec3 p=ro+rd*diskT;float radius=length(p.xz);if(radius>1.15&&radius<3.6)disk=accretion(p,kind,u_time);}
+ }
+ float halo=0.;
+ if(kind<3.5){
+  float d=max(b-r,0.);float env=kind<1.5?.45:kind<2.5?.17:.21;
+  halo=exp(-pow(d/env,1.38))*(kind<1.5?.27:kind<2.5?.14:.16);
+  vec3 hc=kind<.5?vec3(1.,.66,.32):kind<1.5?vec3(1.,.28,.09):kind<2.5?vec3(.55,.73,1.):vec3(.23,.48,1.);
+  col+=hc*halo;
+ }
+ // Disco primário no plano orbital e imagens secundárias didáticas curvadas acima/abaixo.
+ if(diskT>0.&&length(disk)>0.&& (front<0.||diskT<front))col+=disk;
+ if(kind>3.5&&u_feed>.001){
+   float dist=length(ro);vec2 screen=uv*(2.0/1.85)*dist;screen.y*=sign(ro.y+.0001);
+   float elev=abs(ro.y)/dist;
+   col+=lensDisk(screen,kind,elev,u_time);
+ }
+ // Jatos: modelo volumétrico analítico de feixes 3D.
+ if((kind>4.5&&u_feed>.10&&u_jets>.5)||(kind>2.5&&kind<3.5&&u_field>.02&&u_magnetar<.5)){
+   vec3 axis;
+   float width,ext,strength;vec3 jetColor;
+   if(kind>4.5){axis=normalize(vec3(.02,.999,.045));width=.22;ext=4.2;strength=u_feed;jetColor=vec3(.34,.72,1.7);}
+   else{float t=u_time*(.15+u_spin*2.);axis=normalize(vec3(.39*cos(t),.91,.39*sin(t)));width=.11;ext=3.6;strength=u_field;jetColor=vec3(.21,.65,1.95);}
+   float s,td;float v=lineBeam(ro,rd,axis,ext,width,s,td);
+   if(front>0.&&td>front)v*=.26;
+   float fade=smoothstep(.45,1.0,abs(s));
+   col+=jetColor*v*strength*(kind>4.5?1.9:1.18)*fade;
+   // Colimadores próximos dos polos: brilho pequeno.
+   float tip=exp(-pow((abs(s)-1.12)*2.0,2.));
+   col+=jetColor*v*tip*.30*strength;
+ }
+ if(front>0.){
+  if(kind<3.5){vec3 pos=ro+rd*front;vec3 body=surface(pos,rd,kind,u_heat);col=body+col*.048;}
+  else{col*=.014;col+=vec3(.001,.003,.011);}
+ }
+ // Anel estreito de luz fortemente desviada, próximo à borda da sombra aparente.
+ if(kind>3.5){float diff=abs(b-1.21);float ring=exp(-pow(diff*24.,2.));float diff2=abs(b-1.42);float ring2=exp(-pow(diff2*8.5,2.));vec3 lc=kind>4.5?vec3(.62,.99,1.54):vec3(2.70,1.10,.33);col+=lc*(ring*.69+ring2*.10)*u_feed;}
+ // A forma do campo magnético é ilustrada; os arcos não seriam luminosos por si mesmos.
+ if(kind>2.5&&kind<3.5&&u_magnetar>.5){
+   vec2 q=uv*(2.0/1.85)*length(ro);float a=atan(q.y,q.x);float d=length(q);
+   float sine=abs(q.x)/max(d,.01);float arc=0.;
+   for(int i=0;i<3;i++){
+     float f=float(i),l=1.7+f*.62;float shape=l*sine*sine;
+     float line=exp(-pow((d-shape)/(.018+f*.008),2.));
+     arc+=line*(.46-.10*f)*smoothstep(.98,1.18,d);
+   }
+   float flare=pow(max(0.,sin(a*11.+u_time*1.9+fbm(vec3(q*1.6,u_time*.04))*7.)),7.)*exp(-pow((d-1.25)/.5,2.));
+   col+=vec3(.27,.55,1.30)*arc*u_field+vec3(.72,.45,1.38)*flare*.15*u_field;
+ }
+ if(u_burst>.001){float ed=max(0.,b-1.);float shell=exp(-pow((ed-(1.4+u_burst*2.2))/.38,2.));float sparkle=sin(atan(rd.y,rd.x)*56.+u_time*3.)*.5+.5;col+=vec3(1.8,.49,.18)*shell*u_burst*(.55+.55*sparkle);col+=vec3(.30,.50,1.)*exp(-ed*.8)*u_burst*.18;}
+ // Anel de brilho atmosférico leve, de acordo com a estrela.
+ if(kind<3.5&&front<0.){float width=kind<2.5?.24:.13;float rim=exp(-pow((b-r)/width,2.));vec3 rc=kind<1.5?vec3(1.1,.30,.11):vec3(.24,.46,1.);col+=rim*rc*(kind<1.5?.25:.15);}
+ // Mapeamento de tons; pequenas altas intensidades destacam emissão térmica.
+ col=1.-exp(-max(col,vec3(0.))*.92);
+ col=pow(col,vec3(.91));
+ gl_FragColor=vec4(clamp(col,0.,1.),1.);
+}`;
+function makeShader(gl,type,src){const sh=gl.createShader(type);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)){let err=gl.getShaderInfoLog(sh);console.error('Erro do shader:',err);gl.deleteShader(sh);throw new Error(err)}return sh}
+function initWebGL(){let canvas=visual.$canvas;const gl=canvas.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:false,powerPreference:'low-power'})||canvas.getContext('experimental-webgl');if(!gl){initFallback();return false}try{const program=gl.createProgram();gl.attachShader(program,makeShader(gl,gl.VERTEX_SHADER,vertexSource));gl.attachShader(program,makeShader(gl,gl.FRAGMENT_SHADER,fragmentSource));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program));gl.useProgram(program);const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);const loc=gl.getAttribLocation(program,'a_pos');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);visual.gl=gl;visual.program=program;visual.buffer=buffer;for(let name of ['u_res','u_time','u_kind','u_heat','u_spin','u_feed','u_field','u_burst','u_rfactor','u_zoom','u_doppler','u_jets','u_magnetar','u_eye','u_right','u_up','u_forward'])visual.uniforms[name]=gl.getUniformLocation(program,name);return true}catch(e){console.error(e);initFallback();return false}}
+function vecCross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}
+function vecNormal(v){let l=Math.hypot(...v)||1;return v.map(x=>x/l)}
+function resize(){if(!visual.gl){resizeFallback();return;}let rect=visual.$canvas.getBoundingClientRect();if(rect.width<5||rect.height<5)return;let limit=window.innerWidth<900?1.10:1.3;let dpr=Math.min(window.devicePixelRatio||1,limit);let w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));if(w*h>1250000){let scale=Math.sqrt(1250000/(w*h));w=Math.floor(w*scale);h=Math.floor(h*scale)}if(visual.$canvas.width!==w||visual.$canvas.height!==h){visual.$canvas.width=w;visual.$canvas.height=h;visual.gl.viewport(0,0,w,h)}renderOnce()}
+function renderOnce(){let gl=visual.gl;if(!gl){renderFallback();return;}let k=currentVisual;let d=6.2/state.zoom;let cp=Math.cos(state.pitch),sp=Math.sin(state.pitch);let eye=[d*Math.sin(state.yaw)*cp,d*sp,d*Math.cos(state.yaw)*cp];let forward=vecNormal(eye.map(x=>-x));let right=vecNormal(vecCross(forward,[0,1,0]));let up=vecNormal(vecCross(right,forward));let u=visual.uniforms;gl.useProgram(visual.program);gl.uniform2f(u.u_res,visual.$canvas.width,visual.$canvas.height);gl.uniform1f(u.u_time,clock);gl.uniform1f(u.u_kind,k.type);gl.uniform1f(u.u_heat,k.heat);gl.uniform1f(u.u_spin,k.spin);gl.uniform1f(u.u_feed,k.feed);gl.uniform1f(u.u_field,k.field);gl.uniform1f(u.u_burst,k.eruption);gl.uniform1f(u.u_rfactor,k.radiusFactor);gl.uniform1f(u.u_zoom,state.zoom);gl.uniform1f(u.u_doppler,k.doppler||0);gl.uniform1f(u.u_jets,k.jets||0);gl.uniform1f(u.u_magnetar,k.magnetar||0);gl.uniform3fv(u.u_eye,eye);gl.uniform3fv(u.u_right,right);gl.uniform3fv(u.u_up,up);gl.uniform3fv(u.u_forward,forward);gl.drawArrays(gl.TRIANGLES,0,6)}
+function frame(timestamp){requestAnimationFrame(frame);if(!visual.gl&&!visual.fallback)return;let minDelay=window.innerWidth<900?1000/25:1000/35;if(lastFrame&&timestamp-lastFrame<minDelay)return;let dt=lastFrame?Math.min(.09,(timestamp-lastFrame)/1000):.03;lastFrame=timestamp;if(state.playing)clock+=dt;renderOnce()}
+
+// Visualização alternativa em Canvas 2D para navegadores que bloqueiam WebGL.
+// O modo principal acima é WebGL com interseções geométricas em três dimensões.
+function initFallback(){
+ const canvas=$('fallback-canvas');canvas.style.display='block';
+ visual.fallback={canvas,ctx:canvas.getContext('2d')};
+ $('no-webgl').style.display=visual.fallback.ctx?'none':'block';if(visual.fallback.ctx)resizeFallback();
+}
+function resizeFallback(){
+ if(!visual.fallback)return;
+ const {canvas}=visual.fallback,r=visual.$canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,1.5);
+ let w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);
+ if(w*h>1200000){const sc=Math.sqrt(1200000/(w*h));w=Math.round(w*sc);h=Math.round(h*sc)}
+ if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}
+ renderFallback();
+}
+function renderFallback(){
+ if(!visual.fallback)return;const {canvas,ctx}=visual.fallback,w=canvas.width,h=canvas.height;
+ if(!w||!h||!ctx)return;
+ const typ=currentVisual.type,feed=currentVisual.feed,spin=currentVisual.spin,field=currentVisual.field;
+ const cx=w*.5,cy=h*.515,size=Math.min(w,h)*.165*state.zoom;
+ ctx.clearRect(0,0,w,h);
+ let grad=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h)*.72);
+ grad.addColorStop(0,'#151739');grad.addColorStop(.40,'#090f24');grad.addColorStop(1,'#030713');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+ // Pontos de luz posicionados deterministicamente.
+ for(let i=0;i<180;i++){
+   let n=Math.abs(Math.sin((i+1)*127.183)*43758.54)%1,m=Math.abs(Math.sin((i+1)*32.99)*72355.5)%1;
+   let x=(n*w+state.yaw*11) %w,y=(m*h+state.pitch*4+h)%h;
+   let r=.25+((i*13)%8)/15,alpha=.2+((i*7)%9)/16;
+   ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle='rgba(180,210,255,'+alpha+')';ctx.fill();
+ }
+ function radial(x,y,rad,stops){let g=ctx.createRadialGradient(x,y,0,x,y,rad);stops.forEach(([p,c])=>g.addColorStop(p,c));return g}
+ function ellipseRing(x,y,rx,ry,lineWidth,color,angle=0){ctx.beginPath();ctx.ellipse(x,y,rx,ry,angle,0,Math.PI*2);ctx.strokeStyle=color;ctx.lineWidth=lineWidth;ctx.stroke()}
+ function jet(length,width,color,vertical=true){
+   let tilt=Math.sin(clock*(.2+spin*1.7))*(typ===3?.36:.04);let x1=cx+tilt*length*.5;
+   for(let sign of [-1,1]){
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(tilt);let j=ctx.createLinearGradient(0,0,0,sign*length);
+      j.addColorStop(0,color.replace('ALPHA','0.35'));j.addColorStop(.5,color.replace('ALPHA','0.68'));j.addColorStop(1,color.replace('ALPHA','0'));
+      ctx.fillStyle=j;ctx.beginPath();ctx.moveTo(-width*.30,0);ctx.lineTo(-width,sign*length*.88);ctx.quadraticCurveTo(0,sign*length*1.06,width,sign*length*.88);ctx.lineTo(width*.3,0);ctx.fill();ctx.restore();
+   }
+ }
+ if((typ===3&&field>.04)||(typ===5&&feed>.1&&state.jetOn))jet(size*(typ===5?3.3:2.8),size*(typ===5?.42:.19),typ===5?'rgba(83,172,255,ALPHA)':'rgba(73,129,255,ALPHA)');
+ if(typ>=4){
+   let rx=size*3.25,ry=size*(.68+Math.abs(Math.sin(state.pitch))*.4);
+   if(feed>.002){
+     ctx.save();ctx.translate(cx,cy);ctx.rotate(Math.sin(state.yaw)*.12);
+     let halo=radial(0,0,rx*1.2,[[0,'rgba(0,0,0,0)'],[.35,'rgba(255,102,33,.16)'],[1,'rgba(0,0,0,0)']]);
+     ctx.fillStyle=halo;ctx.beginPath();ctx.ellipse(0,0,rx*1.03,ry*1.4,0,0,Math.PI*2);ctx.fill();
+     for(let i=0;i<23;i++){let rr=(1.4+i*.095)*size;let alpha=feed*(.09+.55*Math.pow(Math.max(0,Math.sin(i*1.2+clock*.7)),3));
+       ellipseRing(0,0,rr,rr*ry/rx,size*.023,typ===5?'rgba(107,196,255,'+alpha+')':'rgba(255,146,66,'+alpha+')');}
+     ctx.restore();
+   }
+   ctx.beginPath();ctx.arc(cx,cy,size,0,Math.PI*2);ctx.fillStyle='#010309';ctx.fill();
+   if(feed>.003){
+     const gradient=ctx.createLinearGradient(cx-rx,cy,cx+rx,cy);
+     if(typ===5){gradient.addColorStop(0,'rgba(126,199,255,.55)');gradient.addColorStop(.5,'rgba(245,247,255,.85)');gradient.addColorStop(1,'rgba(74,142,246,.48)')}
+     else{gradient.addColorStop(0,'rgba(255,208,108,.88)');gradient.addColorStop(.5,'rgba(255,148,49,.86)');gradient.addColorStop(1,'rgba(221,57,21,.56)')}
+     ctx.save();ctx.beginPath();ctx.ellipse(cx,cy,size*2.9,size*1.65,0,Math.PI,2*Math.PI);ctx.strokeStyle=gradient;ctx.lineWidth=size*.30;ctx.globalAlpha=.76*feed;ctx.stroke();
+     ctx.beginPath();ctx.ellipse(cx,cy,size*2.5,size*1.23,0,0,Math.PI);ctx.lineWidth=size*.13;ctx.globalAlpha=.50*feed;ctx.stroke();ctx.restore();
+   }
+   ellipseRing(cx,cy,size*1.21,size*1.21,size*.036,typ===5?'rgba(151,216,255,'+(.02+feed*.55)+')':'rgba(255,202,119,'+(.02+feed*.60)+')');
+   let glow=radial(cx,cy,size*1.75,[[0,'rgba(0,0,0,0)'],[.66,'rgba(0,0,0,0)'],[.83,typ===5?'rgba(64,139,255,.12)':'rgba(249,111,33,.14)'],[1,'rgba(0,0,0,0)']]);ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,size*1.75,0,Math.PI*2);ctx.fill();
+ }else{
+   let r=size*currentVisual.radiusFactor;
+   let base=typ===0?['#fff5a7','#ff902d','#8a2609']:typ===1?['#ffbc7b','#d63f23','#5f110b']:typ===2?['#ffffff','#a8d7ff','#426bb3']:['#defbff','#729ed2','#252d67'];
+   ctx.beginPath();ctx.arc(cx,cy,r*1.45,0,Math.PI*2);ctx.fillStyle=radial(cx,cy,r*1.47,[[0,'rgba(0,0,0,0)'],[.63,'rgba(0,0,0,0)'],[.77,typ<=1?'rgba(248,111,39,.20)':'rgba(96,158,255,.20)'],[1,'rgba(0,0,0,0)']]);ctx.fill();
+   ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);let body=ctx.createRadialGradient(cx-r*.30,cy-r*.37,r*.03,cx+r*.20,cy+r*.1,r*1.4);body.addColorStop(0,base[0]);body.addColorStop(.58,base[1]);body.addColorStop(1,base[2]);ctx.fillStyle=body;ctx.fill();
+   ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.clip();for(let i=0;i<28;i++){let p=(i*3.137)%1,angle=i*2.4+clock*(.03+spin*.28),x=cx+(Math.sin(angle)*.65)*r,y=cy+Math.cos(angle*1.71)*r*.72,rr=r*(.05+.08*p);ctx.beginPath();ctx.arc(x,y,rr,0,Math.PI*2);ctx.fillStyle=typ<=1?'rgba(255,211,132,.045)':'rgba(210,232,255,.03)';ctx.fill();}ctx.restore();
+ }
+ if(currentVisual.eruption>0){let r=size*(1.4+currentVisual.eruption*2.2);ellipseRing(cx,cy,r,r,size*.18,'rgba(255,132,55,'+(.75*currentVisual.eruption)+')')}
+}
+const shared=restoreFromHash();initUI();updateSliderRanges();if(shared){updateSliderRanges();$('birthmass-slider').value=state.birthMass;$('life-slider').value=state.life;$('collapse-mass-slider').value=state.collapseMass;$('radius-slider').value=state.radiusExp;['birthmass-slider','life-slider','collapse-mass-slider','radius-slider'].forEach(id=>sliderFill($(id)));document.querySelectorAll('.preset').forEach(el=>el.classList.toggle('active',el.dataset.body===state.body));selectMode(state.mode)}else updateAll();initWebGL();resize();requestAnimationFrame(frame)
+</script>
+</body></html>
